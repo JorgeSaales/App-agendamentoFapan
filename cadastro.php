@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="../assets/fapan.png">
     <script type="text/javascript" src="script.js"></script>
+    <style>
+        .accordion{
+    width:70%;
+}
+    </style>
 </head>
 <body>
     <div class="d-flex" id="wrapper">
