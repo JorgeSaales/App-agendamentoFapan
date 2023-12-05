@@ -10,7 +10,7 @@ if(isset($_GET['laboratorio'])) {
 
     if($result && mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
-        $nome_sala = $row['Nome_Sala'];
+        $nome_sala = $row['nome_sala'];
         $cadeiras = $row['cadeiras'];
     } else {
         $_SESSION['erro'] = "Laboratório não encontrado.";

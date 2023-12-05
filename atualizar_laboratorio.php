@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome_sala = $_POST['nome_sala'];
     $cadeiras = intval($_POST['cadeiras']);
 
-    $sql = "UPDATE laboratorios SET Nome_Sala='$nome_sala', cadeiras=$cadeiras  WHERE id=$id_lab";
+    $sql = "UPDATE laboratorios SET nome_sala='$nome_sala', cadeiras=$cadeiras  WHERE id=$id_lab";
 
     if (mysqli_query($conn, $sql)) {
         $_SESSION['sucesso'] = "Laboratório atualizado com sucesso!";

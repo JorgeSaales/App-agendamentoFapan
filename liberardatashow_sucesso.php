@@ -7,7 +7,7 @@ $result = mysqli_query($conn, $query);
 if ($result) {
     session_start();
     $_SESSION['sucessoliberacaodatashow']= "Liberação de Equipamento realizado com sucesso";
-    header("location: liberacaodatashow.php");
+    header("location: listadatashow.php");
 }
 else {
     echo 'ERRO';

@@ -2,30 +2,36 @@
 
 include('conexao.php');
 
+$user = $_POST['user'];
 $nomesala = $_POST['nome_sala'];
-
 $data = $_POST['data'];
-$horas = $_POST['horas'];
-$minutos = $_POST['minutos'];
+$turno = $_POST['turno'];
 
-$datahora = $data . 'T' . $horas . ':' . $minutos;
+echo $nomesala."<br>";
+echo $data."<br>";
+echo $turno."<br>";
 
-echo $datahora;
-echo "<br>";
+$queryVerifica = "SELECT * FROM agendamentolaboratorio WHERE ativo = 1 AND laboratorio = ".$nomesala." AND dataturno = '".$data."' AND turno = ".$turno.";";
+$resultVerifica = mysqli_query($conn, $queryVerifica);
+$rowVerifica = mysqli_num_rows($resultVerifica);
 
-$query = "insert into agendamentolaboratorio (data_hora , laboratorio) values ('".$datahora."',".$nomesala.");";
-$result = mysqli_query($conn, $query);
-$query2 = "update laboratorios set disponibilidade = false where id = ".$nomesala.";";
-$result2 = mysqli_query($conn, $query2);
-if ($result) {
-    echo 'Cadastro Realizado';
-    session_start();
-    $_SESSION['sucessolaboratorio']= "Agendamento de laboratorio efetuado com sucesso";
-    header("location: agendarlaboratorio.php");
-}
-
-else { 
-    echo 'ERRO';
+ if ($rowVerifica > 0) {
+     session_start();
+     $_SESSION['errolaboratorio'] = "Já existe um agendamento para esta data e turno.";
+     header("location: agendarlaboratorio.php");
+ } else {
+        $query = "insert into agendamentolaboratorio (dataturno , laboratorio, turno, ativo, usuario) values ('".$data."',".$nomesala.",".$turno.", 1, ".$user.");";
+        $result = mysqli_query($conn, $query);
+        if ($result) {
+            echo 'Cadastro Realizado';
+            session_start();
+            $_SESSION['sucessolaboratorio']= "Agendamento de laboratorio efetuado com sucesso";
+            header("location: agendarlaboratorio.php");
+        }
+        
+        else { 
+            echo 'ERRO';
+        }
 }
 
 ?>

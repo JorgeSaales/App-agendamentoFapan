@@ -1,32 +1,34 @@
-<?php 
+<?php
 
 include('conexao.php');
 
+$user = $_POST['user'];
 $datashow = $_POST['datashow'];
-
 $data = $_POST['data'];
-$horas = $_POST['horas'];
-$minutos = $_POST['minutos'];
+$turno = $_POST['turno'];
 
-$datahora = $data . 'T' . $horas . ':' . $minutos;
+echo $datashow."<br>";
+echo $data."<br>";
+echo $turno."<br>";
 
-echo $datahora;
-echo "<br>";
-echo $datashow;
+$queryVerifica = "SELECT * FROM agendamentodatashow WHERE ativo = 1 AND equipamento = ".$datashow." AND dataturno = '".$data."' AND turno = '".$turno."'";
+$resultVerifica = mysqli_query($conn, $queryVerifica);
+$rowVerifica = mysqli_num_rows($resultVerifica);
 
-$query = "insert into agendamentodatashow (data_hora , equipamento) values ('".$datahora."',".$datashow.");";
-$result = mysqli_query($conn, $query);
-$query2 = "update equipamentos set disponibilidade = false where id = ".$datashow.";";
-$result2 = mysqli_query($conn, $query2);
-if ($result) {
-    session_start();
-    $_SESSION['sucessodatashow']= "Agendamento de Equipamento realizado Datashow com sucesso";
-    header("location: agendadatashow.php");
-}
-else {
-    echo 'ERRO';
-}
-if($result2){
-    echo 'datashow ja agendado';
-}
-?>
+ if ($rowVerifica > 0) {
+     session_start();
+     $_SESSION['errodatashow'] = "Já existe um agendamento para esta data e turno.";
+     header("location: agendadatashow.php");
+ } else {
+     $query = "INSERT INTO agendamentodatashow (dataturno, turno, equipamento, ativo, usuario) VALUES ('".$data."',".$turno.", ".$datashow.", 1, ".$user.");";
+     $result = mysqli_query($conn, $query);
+
+     if ($result) {
+         session_start();
+         $_SESSION['sucessodatashow'] = "Agendamento de Equipamento Datashow realizado com sucesso";
+         header("location: agendadatashow.php");
+     } else {
+         echo 'ERRO';
+     }
+ }
+ ?>

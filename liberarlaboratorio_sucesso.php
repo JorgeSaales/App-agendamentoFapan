@@ -6,8 +6,8 @@ $query = "update laboratorios set disponibilidade = true where id = ".$laborator
 $result = mysqli_query($conn, $query);
 if ($result) {
     session_start();
-    $_SESSION['sucessoliberacaodatashow']= "Liberação de Laboratório realizado com sucesso";
-    header("location: liberacaolaboratorio.php");
+    $_SESSION['sucessoliberacaolaboratorio']= "Liberação de Laboratório realizado com sucesso";
+    header("location: listalaboratorio.php");
 }
 else {
     echo 'ERRO';

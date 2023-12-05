@@ -1,7 +1,6 @@
 <?php
 session_start();
 include("conexao.php");
-include("checkAdmin.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +8,7 @@ include("checkAdmin.php");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>autorização de laboratorio</title>
+    <title>Agendamentos Laboratório</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="../assets/fapan.png">
@@ -20,43 +19,56 @@ include("checkAdmin.php");
     <?php include("menulateral.php"); ?>
         
         <div id="page-content-wrapper" class="container-fluid">
-            <h1 class="mt-4 mb-4">Liberação de Laboratório</h1>
+            <h1 class="mt-4 mb-4">Agendamentos de Laboratórios</h1>
             <div class="card">
                 <div class="card-body">
-                <?php if(isset($_SESSION['sucessoliberacaolaboratorio'])): ?>
-                    <div class="alert alert-success" role="alert"><?=$_SESSION['sucessoliberacaolaboratorio']?></div>
-                    <?php unset($_SESSION['sucessoliberacaolaboratorio']); endif; ?>
+                <?php if(isset($_SESSION['sucessolaboratorio'])): ?>
+                    <div class="alert alert-success" role="alert"><?=$_SESSION['sucessolaboratorio']?></div>
+                    <?php unset($_SESSION['sucessolaboratorio']); endif; ?>
+                    
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                    <th scope="col">Nome da Sala</th>
-                    <th scope="col">Nº de Cadeiras</th>
+                    <?php if($_SESSION['admin']==true): ?>
+                    <th scope="col">Usuário</th>
+                    <?php endif?>
+                    <th scope="col">Sala</th>
+                    <th scope="col">Cadeiras</th>
                     <th scope="col">Data</th>
-                    <th scope="col">Hora</th>
+                    <th scope="col">Turno</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Ações</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                            $sql = "select agendamentolaboratorio.laboratorio as laboratorio_id, laboratorios.Nome_Sala as laboratorio_nome, laboratorios.cadeiras as numero_cadeiras, laboratorios.disponibilidade as disponibilidade, agendamentolaboratorio.data_hora as agendamentodatahora from agendamentolaboratorio inner join laboratorios on agendamentolaboratorio.laboratorio = laboratorios.id;";
+                        if($_SESSION['admin']==true) {
+                            $sql = "select agendamentolaboratorio.laboratorio as laboratorio_id, laboratorios.nome_sala as laboratorio_nome, laboratorios.cadeiras as laboratorio_cadeiras, agendamentolaboratorio.id as agendamento_id, agendamentolaboratorio.dataturno as agendamentodataturno, agendamentolaboratorio.turno as agendamentoturno, agendamentolaboratorio.ativo as agendamentoativo, users.nome as usuario from agendamentolaboratorio inner join laboratorios on agendamentolaboratorio.laboratorio = laboratorios.id inner join users on agendamentolaboratorio.usuario = users.id ORDER BY agendamento_id DESC;";
+                        }
+                        
+                        else {
+                           $sql = "select agendamentolaboratorio.laboratorio as laboratorio_id, laboratorios.nome_sala as laboratorio_nome, laboratorios.cadeiras as laboratorio_cadeiras, agendamentolaboratorio.id as agendamento_id, agendamentolaboratorio.dataturno as agendamentodataturno, agendamentolaboratorio.turno as agendamentoturno, agendamentolaboratorio.ativo as agendamentoativo, users.nome as usuario from agendamentolaboratorio inner join laboratorios on agendamentolaboratorio.laboratorio = laboratorios.id inner join users on agendamentolaboratorio.usuario = users.id WHERE users.id = ".$_SESSION['id']." ORDER BY agendamento_id DESC;";
+                        }
+                    
                             $result = mysqli_query($conn, $sql);
                             if ($result) {
                                 while ($assoc = mysqli_fetch_assoc($result)) {
-                                    echo '
-                                    <tr>
-                                    <th scope="row">'.$assoc['laboratorio_nome'].'</th>
-                                    <th scope="row">'.$assoc['numero_cadeiras'].'</th>
-                                    <td>'.date('d/m/Y', strtotime($assoc['agendamentodatahora'])).'</td>
-                                    <td>'.date('H:i', strtotime($assoc['agendamentodatahora'])).'</td>
+                                    echo '<tr>';
+                                    if($_SESSION['admin']==true) {
+                                    echo '<th scope="row">'.$assoc['usuario'].'</th>';
+                                    }
+                                    echo '<th scope="row">'.$assoc['laboratorio_nome'].'</th>
+                                    <th scope="row">'.$assoc['laboratorio_cadeiras'].'</th>
+                                    <td>'.date('d/m/Y', strtotime($assoc['agendamentodataturno'])).'</td>
+                                    <td>'.($assoc['agendamentoturno'] == 1 ? 'Manhã' : ($assoc['agendamentoturno'] == 2 ? 'Tarde' : ($assoc['agendamentoturno'] == 3 ? 'Noite' : 'Não'))) .'</td>
+                                    <td>'.($assoc['agendamentoativo'] == 0 ? 'Cancelado' : 'OK').'</td>
                                     ';
-                                    if($assoc['disponibilidade']==false){
-                                        echo '<td><a href = "liberarlaboratorio_sucesso.php?laboratorio='.$assoc['laboratorio_id'].'"><button type="button" class="btn btn-success">Liberar</button></a></td>';
+                                    if($assoc['agendamentoativo']==1){
+                                        echo '<td><a onclick="cancelalaboratorio('.$assoc['agendamento_id'].');"><button type="button" class="btn btn-danger">Cancelar</button></a></td>';
                                     }
                                     else {
-                                        echo '<td>Disponivel</td>';
+                                        echo '<td></td>';
                                     }
-                                    echo '<td><a href = "editarlaboratorio.php?laboratorio='.$assoc['laboratorio_id'].'"><button type="button" class="btn btn-primary">Editar</button></a></td>';
-                                    echo '<td><a href = "removerlaboratorio.php?laboratorio='.$assoc['laboratorio_id'].'"><button type="button" class="btn btn-danger">Remover</button></a></td>';
                                     echo '</tr>';
                                 }
                             } else {

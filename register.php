@@ -71,6 +71,11 @@ session_start();
                 <label for="senha">Senha:</label>
                 <input type="password" class="form-control" name="senha" id="senha" placeholder="Digite sua senha">
             </div>
+            <div class="form-group">
+                <label for="confirmasenha">Confirmar Senha:</label>
+                <input type="password" class="form-control" name="confirmasenha" id="confirmasenha" placeholder="Digite a senha novamente">
+            </div>
+            
             <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
         </form>
         <p class="mt-3 text-center">Já tem uma conta? <a href="index.php">Entrar com ela agora</a>.</p>

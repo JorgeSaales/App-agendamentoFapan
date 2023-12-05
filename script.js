@@ -48,6 +48,52 @@ function cadastrarRecurso() {
     alert('Opção escolhida: Cadastro de Recursos');
 }
 
+function removerDatashow(datashow_id) {
+    
+    var confirmacao = confirm("Tem certeza que deseja remover este datashow?");
+
+    if (confirmacao) {
+        window.location.href = "/removerdatashow.php?datashow=" + String(datashow_id);
+    }
+}
+
+function canceladatashow(agendamento_id) {
+    
+    var confirmacao = confirm("Tem certeza que deseja cancelar este agendamento?");
+
+    if (confirmacao) {
+        window.location.href = "/canceladatashow.php?agendamento=" + String(agendamento_id);
+    }
+}
+
+function removerHistoricoDatashow(agendamentodatashow_id) {
+    
+    var confirmacao = confirm("Tem certeza que deseja remover este agendamento?");
+
+    if (confirmacao) {
+        window.location.href = "/removerhistoricodatashow.php?agendashow=" + String(agendamentodatashow_id);
+    }
+}
+
+function removerLaboratorio(lab_id) {
+    
+    var confirmacao = confirm("Tem certeza que deseja remover este laboratorio?");
+
+    if (confirmacao) {
+        window.location.href = "/removerlaboratorio.php?laboratorio=" + String(lab_id);
+    }
+}
+
+function cancelalaboratorio(agendamento_id) {
+    
+    var confirmacao = confirm("Tem certeza que deseja cancelar este agendamento?");
+
+    if (confirmacao) {
+        window.location.href = "/cancelalaboratorio.php?agendamento=" + String(agendamento_id);
+    }
+}
+
+
 function sair() {
     window.location.href = "/logout.php";
 }

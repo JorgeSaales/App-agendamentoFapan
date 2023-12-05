@@ -4,11 +4,19 @@ include('conexao.php');
 $nome = $_POST['nome'];
 $email = $_POST['email'];
 $senha = $_POST['senha'];
+$confirmasenha = $_POST['confirmasenha'];
 
 // Verifica se os campos foram preenchidos
 if (empty($nome) || empty($email) || empty($senha)) {
     session_start();
     $_SESSION['registererro'] = "Por favor, preencha todos os campos.";
+    header("location: register.php");
+    exit();
+}
+
+else if ($senha!=$confirmasenha) {
+    session_start();
+    $_SESSION['registererro'] = "Sua confirmação de senha não corresponde.";
     header("location: register.php");
     exit();
 }
@@ -28,7 +36,7 @@ if ($resultEmail && mysqli_num_rows($resultEmail) > 0) {
     exit();
 }
 
-$query = "INSERT INTO users (nome, email, senha, admin) VALUES ('$nome', '$email', '$senha', false)";
+$query = "INSERT INTO users (nome, email, senha, ativo, admin) VALUES ('$nome', '$email', '$senha', 1, false)";
 $result = mysqli_query($conn, $query);
 
 if ($result) {
